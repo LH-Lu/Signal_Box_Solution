@@ -21,8 +21,6 @@ int main() {
 	2) Modify interlocker function to accept condition sets (as long as one set of condition is true, change signal state)
 	*/
 
-	// test
-
 	// Initialise signals. [EDIT THIS SECTION]
 	std::unordered_map<std::string, SigPara> signal;
 	// Different sets of conditions separated by & e.g cond 1.1, 1.2, 1.3& 2.1, 2.2, 2.3 ... 1.1 to 1.3 are one set of conditions and 2.1 to 2.3 are another set of conditions
