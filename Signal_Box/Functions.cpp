@@ -14,6 +14,8 @@
 	enum SigDirection { UP = 0, DOWN };
 */
 
+// NOTE: With the exception of SignalStatusPrint, if std::unordered_map para is: FIRST argument --> function called privately; SECOND arguement --> function called directly from main function. 
+
 // Prints section break
 void PrintSectionBreak() {
 	int idx;
