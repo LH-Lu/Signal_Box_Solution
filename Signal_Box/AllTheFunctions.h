@@ -34,6 +34,9 @@ void InterLocking(std::string UserInput, std::unordered_map<std::string, SigPara
 // Check if requirements for signal to change state are met
 bool CheckSignalReq(std::unordered_map<std::string, SigPara>& signals, std::string UserInput, std::string StateReq);
 
+// Check switch point condition as this will dictate what conditions need to be metand whether to skip to next set of conditions
+int CheckSwitchCondition(std::unordered_map<std::string, SigPara>& signals, std::string StateReq);
+
 // Check if EACH signal requirement has been met
 bool CheckSignal(std::unordered_map<std::string, SigPara>& signals, std::string IdvStateReq);
 

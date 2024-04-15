@@ -197,6 +197,7 @@ bool CheckSignalReq(std::unordered_map<std::string, SigPara>& signals, std::stri
 
 	// Declare variables
 	int idx;
+	int ConditionSetNum;
 	bool ReturnReqCheck = true;
 	bool IdvReqCheck = false;
 	std::string IdvStateReq;
@@ -220,30 +221,76 @@ bool CheckSignalReq(std::unordered_map<std::string, SigPara>& signals, std::stri
 	case 'R':
 		// Aspect signal
 
-		// Check switch point condition as this will dictate what conditions need to be met and whether to skip to next set of conditions
-		for (idx = 0; idx < StateReq.length(); idx += 6) {
+		// Check switch point condition as this will dictate what conditions need to be met and whetehr to skip to next set of conditions
+		
 
-			IdvStateReq = StateReq.substr(idx, idx + 4);
-
-			// Check switch point condition as this will dictate what conditions need to be met and whether to skip to next set of conditions
-			
-			// Null case, signal has no req to change state
-			if (StateReq == "0000") {
-				std::cout << "> Signal change no requirement. \n";
-				return true;
-			}
-			
-			
-			IdvReqCheck = CheckSignal(signals, IdvStateReq);
-
-			if (IdvReqCheck == false) {
-				ReturnReqCheck = false;
-			}
+		// Null case, signal has no req to change state
+		if (StateReq == "0000") {
+			std::cout << "> Signal change no requirement. \n";
+			return true;
 		}
-		break;
+
+
+		IdvReqCheck = CheckSignal(signals, IdvStateReq);
+
+		if (IdvReqCheck == false) {
+			ReturnReqCheck = false;
+		}
 	}
 
 	return ReturnReqCheck;
+}
+
+
+
+
+// Check switch point condition and return Condition Set Number in C++ array idx style based on the state of the switch points (different state of the switch points --> different conditional sets)
+// Based on the state of switch points --> conditional set --> determines what set of conditions must be fulfilled to change the state of the aspect signal
+int CheckSwitchCondition(std::unordered_map<std::string, SigPara>& signals, std::string StateReq) {
+
+	// Declare variables
+	int idx;
+	int ConditionIdx = 0;
+	bool IdvReqCheck = false;
+	bool SwitchCond = true;
+	std::string IdvStateReq;
+
+	// Find which condition set has been fulfilled for each aspect signal
+	// Note, Switch conditions are ALWAYS placed at the start of each condition set
+	std::cout << "> Switch condition set #" << ConditionIdx + 1 << ":" << std::endl;
+	for (idx = 0; idx < StateReq.length(); idx += 6) {
+		
+		IdvStateReq = StateReq.substr(idx, idx + 4);
+
+		if (IdvStateReq[0] == 'T') {
+			IdvReqCheck = CheckSignal(signals, IdvStateReq);
+			if (IdvReqCheck == false) {
+				SwitchCond = false;
+			}
+		}
+		else { 
+			if (SwitchCond == true) {
+				std::cout << "> Switch condition set #" << ConditionIdx + 1 << " FULFILLED." << std::endl;
+				return ConditionIdx;
+			}
+
+						
+			while (StateReq[idx] != '|') {
+				idx++;
+				if (idx > StateReq.length()) {
+					std::cout << "> All switch condition sets UNFULFILLED." << std::endl;
+					return -1; // reached end of state req string --> no conditions fulfulled
+				}
+			}
+			idx -= 3;
+			SwitchCond = true;
+			ConditionIdx++;
+			std::cout << "> Switch condition set #" << ConditionIdx + 1 << ":" << std::endl;
+		}
+
+	}
+	std::cout << "> All switch condition sets UNFULFILLED." << std::endl;
+	return -1; // reached end of state req string --> no conditions fulfulled
 }
 
 // Check if EACH signal requirement has been met
