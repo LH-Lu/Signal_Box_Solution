@@ -42,8 +42,8 @@ void SignalStatusPrint(std::unordered_map<std::string, SigPara>& signals) {
 
 
 	std::cout << " ->  ----*---------*---------*---------*---------*---------*---------*  -> UP" << std::endl; // main line. 70 char from start to last dash
-	std::cout << "                             \\                  /                           " << std::endl; // to print \ char, need to use \\ designation
-	std::cout << "                              \\                /                            " << std::endl;
+	std::cout << "                              \\ ______________ /                           " << std::endl; // to print \ char, need to use \\ designation
+	std::cout << "                              /                 \\                          " << std::endl;
 	std::cout << " <-  ----*---------*---------*---------*---------*---------*---------*  <- DOWN" << std::endl;
 
 	PrintSignalLocation(signals, DOWN, MaxDist);
@@ -181,40 +181,66 @@ void InterLocking(std::string UserInput, std::unordered_map<std::string, SigPara
 	// Check current state to determine which signal state user wants to switch
 	switch (signals[UserInput].state){
 		case false: // User wants to switch signal false -> true
-			InterLockCheck = CheckSignalReq(signals, signals[UserInput].TrueStateReq);
+			InterLockCheck = CheckSignalReq(signals, UserInput, signals[UserInput].TrueStateReq);
 			ChangeSignal(signals, InterLockCheck, UserInput);
 			break;
 
 		case true: // User wants to switch signal true -> false
-			InterLockCheck = CheckSignalReq(signals, signals[UserInput].FalseStateReq);
+			InterLockCheck = CheckSignalReq(signals, UserInput, signals[UserInput].FalseStateReq);
 			ChangeSignal(signals, InterLockCheck, UserInput);
 			break;
 	}
 }
 
 // Check if requirements for signal to change state are met
-bool CheckSignalReq(std::unordered_map<std::string, SigPara>& signals, std::string StateReq) {
+bool CheckSignalReq(std::unordered_map<std::string, SigPara>& signals, std::string UserInput, std::string StateReq) {
 
-	// Null case, signal has no req to change state
-	if (StateReq == "0000") {
-		std::cout << "> Signal change no requirement. \n";
-		return true;
-	}
-
-	// Signal has req to change state
+	// Declare variables
 	int idx;
 	bool ReturnReqCheck = true;
 	bool IdvReqCheck = false;
 	std::string IdvStateReq;
 
-	for (idx = 0; idx < StateReq.length(); idx += 6) {
+	switch (UserInput[0]) {
+	case 'T':
+		// Switch point
+		for (idx = 0; idx < StateReq.length(); idx += 6) {
 
-		IdvStateReq = StateReq.substr(idx, idx + 4);
-		IdvReqCheck = CheckSignal(signals, IdvStateReq);
+			IdvStateReq = StateReq.substr(idx, idx + 4);
+			IdvReqCheck = CheckSignal(signals, IdvStateReq);
 
-		if (IdvReqCheck == false) {
-			ReturnReqCheck = false;
+			if (IdvReqCheck == false) {
+				ReturnReqCheck = false;
+			}
 		}
+		break;
+
+
+	case 'Y':
+	case 'R':
+		// Aspect signal
+
+		// Check switch point condition as this will dictate what conditions need to be met and whether to skip to next set of conditions
+		for (idx = 0; idx < StateReq.length(); idx += 6) {
+
+			IdvStateReq = StateReq.substr(idx, idx + 4);
+
+			// Check switch point condition as this will dictate what conditions need to be met and whether to skip to next set of conditions
+			
+			// Null case, signal has no req to change state
+			if (StateReq == "0000") {
+				std::cout << "> Signal change no requirement. \n";
+				return true;
+			}
+			
+			
+			IdvReqCheck = CheckSignal(signals, IdvStateReq);
+
+			if (IdvReqCheck == false) {
+				ReturnReqCheck = false;
+			}
+		}
+		break;
 	}
 
 	return ReturnReqCheck;
@@ -265,4 +291,24 @@ void ChangeSignal(std::unordered_map<std::string, SigPara>& signals, bool InterL
 	std::cout << "> SIGNAL " << UserInput << " changed. State changed " << SignalOutput(signals, UserInput) << " -> ";
 	signals[UserInput].state = !signals[UserInput].state; //flip bool variable from true to false and vice versa
 	std::cout << SignalOutput(signals, UserInput) << ".\n\n";
+
+	// For switch point pairs, if one has been selected to change and changes successfully, the other will change too
+	if (UserInput[0] == 'T') {
+		int UserInputSwitch = std::stoi(UserInput.substr(1, 2));
+		int SwitchPairOfUserInputSwitch;
+		std::string SwitchPair;
+
+		if (UserInputSwitch / 10 == 0) {
+			SwitchPairOfUserInputSwitch = (UserInputSwitch % 10) * 11;
+			SwitchPair = 'T' + std::to_string(SwitchPairOfUserInputSwitch);
+		}
+		else if (UserInputSwitch / 10 == UserInputSwitch % 10) {
+			SwitchPairOfUserInputSwitch = (UserInputSwitch % 10);
+			SwitchPair = "T0" + std::to_string(SwitchPairOfUserInputSwitch);
+		}
+
+		std::cout << "> SIGNAL " << SwitchPair << " changed. State changed " << SignalOutput(signals, SwitchPair) << " -> ";
+		signals[SwitchPair].state = !signals[SwitchPair].state; //flip bool variable from true to false and vice versa
+		std::cout << SignalOutput(signals, SwitchPair) << ".\n\n";
+	}
 }

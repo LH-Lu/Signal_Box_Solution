@@ -32,7 +32,7 @@ bool CheckInput(std::string UserInput, std::unordered_map<std::string, SigPara>&
 void InterLocking(std::string UserInput, std::unordered_map<std::string, SigPara>& signals);
 
 // Check if requirements for signal to change state are met
-bool CheckSignalReq(std::unordered_map<std::string, SigPara>& signals, std::string StateReq);
+bool CheckSignalReq(std::unordered_map<std::string, SigPara>& signals, std::string UserInput, std::string StateReq);
 
 // Check if EACH signal requirement has been met
 bool CheckSignal(std::unordered_map<std::string, SigPara>& signals, std::string IdvStateReq);
