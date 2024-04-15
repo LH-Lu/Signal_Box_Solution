@@ -6,8 +6,8 @@
 // struct class is placed in the function header file and not here --> prevent duplication and errors.
 /* struct SigPara{
 		bool state;
-		std::string TrueStateReq;
-		std::string FalseStateReq;
+		std::string TrueStateReq; // req to switch to true state
+		std::string FalseStateReq; // req to switch to false state
 		int LocationPx; // max location val 70px. Only at intervals of 10px. Positive values for UP line, Negative values for DOWN line
 	};
 
@@ -25,10 +25,10 @@ int main() {
 	std::unordered_map<std::string, SigPara> signal;
 	// Different sets of conditions separated by '||' e.g cond 1.1, 1.2, 1.3 || 2.1, 2.2, 2.3 ... 1.1 to 1.3 are one set of conditions and 2.1 to 2.3 are another set of conditions
 	// As long as one set of condition is satisfied, the signal state will change
-	// UP aspect signals (Different sets of conditions are sep)
-	signal["Y01"] = { false, "R01T", "0000", 10 };
-	signal["R01"] = { false, "R02T", "Y01F", 20 };
-	signal["R02"] = { false, "0000", "R01F", 70 };
+	// UP aspect signals (T02 and T04 omitted as they'll be interlocked with their respective pairs T03 and T01)
+	signal["Y01"] = { false, "T01F, T03F, R01T || T01T, T03F, R01T",	   "T01F, T03F, 0000 || T01T, T03F, 0000", 10 };
+	signal["R01"] = { false, "T01F, T03F, R02T || T01T, T03F, R04F, Y03F", "T01F, T03F, Y01F || T01T, T03F, Y01F", 20 };
+	signal["R02"] = { false, "T01F, T03F, 0000 || T01F, T03T, 0000",	   "T01F, T03F, R01F || T01F, T03T, 0000", 70 };
 	// DOWN aspect signals
 	signal["Y03"] = { false, "R04T", "0000", -70 };
 	signal["R04"] = { false, "R05T", "Y03F", -60 };
