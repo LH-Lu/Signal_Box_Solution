@@ -25,10 +25,10 @@ int main() {
 	std::unordered_map<std::string, SigPara> signal;
 	// Different sets of conditions separated by '||' e.g cond 1.1, 1.2, 1.3 || 2.1, 2.2, 2.3 ... 1.1 to 1.3 are one set of conditions and 2.1 to 2.3 are another set of conditions
 	// As long as one set of condition is satisfied, the signal state will change
-	// UP aspect signals (T02 and T04 omitted as they'll be interlocked with their respective pairs T03 and T01)
-	signal["Y01"] = { false, "T01F, T03F, R01T || T01T, T03F, R01T",	   "T01F, T03F, 0000 || T01T, T03F, 0000", 10 };
-	signal["R01"] = { false, "T01F, T03F, R02T || T01T, T03F, R04F, Y03F", "T01F, T03F, Y01F || T01T, T03F, Y01F", 20 };
-	signal["R02"] = { false, "T01F, T03F, 0000 || T01F, T03T, 0000",	   "T01F, T03F, R01F || T01F, T03T, 0000", 70 };
+	// UP aspect signals (T11 and T22 omitted as they'll be interlocked with their respective pairs T01 and T02)
+	signal["Y01"] = { false, "T01F, T02F, R01T || T01T, T02F, R01T",	   "T01F, T02F, 0000 || T01T, T02F, 0000", 10 };
+	signal["R01"] = { false, "T01F, T02F, R02T || T01T, T02F, R04F, Y03F", "T01F, T02F, Y01F || T01T, T02F, Y01F", 20 };
+	signal["R02"] = { false, "T01F, T02F, 0000 || T01F, T02T, 0000",	   "T01F, T02F, R01F || T01F, T02T, 0000", 70 };
 	// DOWN aspect signals
 	signal["Y03"] = { false, "R04T", "0000", -70 };
 	signal["R04"] = { false, "R05T", "Y03F", -60 };
@@ -37,11 +37,11 @@ int main() {
 	// SWITCH POINT pair 1 (everything has to be in default state in order to change switch points) 
 	// if none of the switch points activated, i.e default state, standard signalling interlocking possible--> 
 	// if switch points activated --> special set of interlocking
-	signal["T01"] = { false, "T02F, T03F, Y01F, R01F, R02F, Y03F, R04F, R05F", "Y01F, R01F, R02F, Y03F, R04F, R05F", 30 };
-	signal["T04"] = { false, "T02F, T03F, Y01F, R01F, R02F, Y03F, R04F, R05F", "Y01F, R01F, R02F, Y03F, R04F, R05F", -30 };
+	signal["T01"] = { false, "T02F, T22F, Y01F, R01F, R02F, Y03F, R04F, R05F", "Y01F, R01F, R02F, Y03F, R04F, R05F", 30 };
+	signal["T11"] = { false, "T02F, T22F, Y01F, R01F, R02F, Y03F, R04F, R05F", "Y01F, R01F, R02F, Y03F, R04F, R05F", -50 };
 	// SWITCH POINT pair 2
-	signal["T02"] = { false, "T01F, T04F, Y01F, R01F, R02F, Y03F, R04F, R05F", "Y01F, R01F, R02F, Y03F, R04F, R05F", 50 };
-	signal["T03"] = { false, "T01F, T04F, Y01F, R01F, R02F, Y03F, R04F, R05F", "Y01F, R01F, R02F, Y03F, R04F, R05F", -50 };
+	signal["T02"] = { false, "T01F, T11F, Y01F, R01F, R02F, Y03F, R04F, R05F", "Y01F, R01F, R02F, Y03F, R04F, R05F", 50 };
+	signal["T22"] = { false, "T01F, T11F, Y01F, R01F, R02F, Y03F, R04F, R05F", "Y01F, R01F, R02F, Y03F, R04F, R05F", -30 };
 
 	
 	// Initialise user input and case matching
