@@ -222,7 +222,7 @@ bool CheckSignalReq(std::unordered_map<std::string, SigPara>& signals, std::stri
 		// Aspect signal
 
 		// Check switch point condition as this will dictate what conditions need to be met and whetehr to skip to next set of conditions
-		
+		// TO DO!!!!
 
 		// Null case, signal has no req to change state
 		if (StateReq == "0000") {
@@ -241,11 +241,8 @@ bool CheckSignalReq(std::unordered_map<std::string, SigPara>& signals, std::stri
 	return ReturnReqCheck;
 }
 
-
-
-
 // Check switch point condition and return Condition Set Number in C++ array idx style based on the state of the switch points (different state of the switch points --> different conditional sets)
-// Based on the state of switch points --> conditional set --> determines what set of conditions must be fulfilled to change the state of the aspect signal
+// Based on the state of switch points --> know the conditional set to focus on --> determines what set of conditions must be fulfilled to change the state of the aspect signal
 int CheckSwitchCondition(std::unordered_map<std::string, SigPara>& signals, std::string StateReq) {
 
 	// Declare variables

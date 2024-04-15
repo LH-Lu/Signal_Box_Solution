@@ -34,7 +34,8 @@ void InterLocking(std::string UserInput, std::unordered_map<std::string, SigPara
 // Check if requirements for signal to change state are met
 bool CheckSignalReq(std::unordered_map<std::string, SigPara>& signals, std::string UserInput, std::string StateReq);
 
-// Check switch point condition as this will dictate what conditions need to be metand whether to skip to next set of conditions
+// Check switch point conditionand return Condition Set Number in C++ array idx style based on the state of the switch points(different state of the switch points-- > different conditional sets)
+// Based on the state of switch points --> know the conditional set to focus on --> determines what set of conditions must be fulfilled to change the state of the aspect signal
 int CheckSwitchCondition(std::unordered_map<std::string, SigPara>& signals, std::string StateReq);
 
 // Check if EACH signal requirement has been met

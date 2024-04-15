@@ -34,9 +34,7 @@ int main() {
 	signal["R04"] = { false, "R05T", "Y03F", -60 };
 	signal["R05"] = { false, "0000", "R04F", -10 };
 
-	// SWITCH POINT pair 1 (everything has to be in default state in order to change switch points) 
-	// if none of the switch points activated, i.e default state, standard signalling interlocking possible--> 
-	// if switch points activated --> special set of interlocking
+	// SWITCH POINT pair 1 (everything has to be in default state in order to change switch points) Note, switch pairs interlocked tgt --> if one is in true state, the other will also be in true state
 	signal["T01"] = { false, "T02F, T22F, Y01F, R01F, R02F, Y03F, R04F, R05F", "Y01F, R01F, R02F, Y03F, R04F, R05F", 30 };
 	signal["T11"] = { false, "T02F, T22F, Y01F, R01F, R02F, Y03F, R04F, R05F", "Y01F, R01F, R02F, Y03F, R04F, R05F", -50 };
 	// SWITCH POINT pair 2
