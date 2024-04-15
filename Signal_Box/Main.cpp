@@ -37,11 +37,11 @@ int main() {
 	// SWITCH POINT pair 1 (everything has to be in default state in order to change switch points) 
 	// if none of the switch points activated, i.e default state, standard signalling interlocking possible--> 
 	// if switch points activated --> special set of interlocking
-	signal["T01"] = { false, "Y01F, R01F, R02F, Y03F, R04F, R05F", "Y01F, R01F, R02F, Y03F, R04F, R05F", 30 };
-	signal["T02"] = { false, "Y01F, R01F, R02F, Y03F, R04F, R05F", "Y01F, R01F, R02F, Y03F, R04F, R05F", -30 };
+	signal["T01"] = { false, "T02F, T03F, Y01F, R01F, R02F, Y03F, R04F, R05F", "Y01F, R01F, R02F, Y03F, R04F, R05F", 30 };
+	signal["T04"] = { false, "T02F, T03F, Y01F, R01F, R02F, Y03F, R04F, R05F", "Y01F, R01F, R02F, Y03F, R04F, R05F", -30 };
 	// SWITCH POINT pair 2
-	//signal["T03"] = { false, "Y01F, R01F, R02F, Y03F, R04F, R05F", "Y01F, R01F, R02F, Y03F, R04F, R05F", 50 };
-	//signal["T04"] = { false, "Y01F, R01F, R02F, Y03F, R04F, R05F", "Y01F, R01F, R02F, Y03F, R04F, R05F", -50 };
+	signal["T02"] = { false, "T01F, T04F, Y01F, R01F, R02F, Y03F, R04F, R05F", "Y01F, R01F, R02F, Y03F, R04F, R05F", 50 };
+	signal["T03"] = { false, "T01F, T04F, Y01F, R01F, R02F, Y03F, R04F, R05F", "Y01F, R01F, R02F, Y03F, R04F, R05F", -50 };
 
 	
 	// Initialise user input and case matching
