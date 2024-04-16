@@ -201,6 +201,7 @@ bool CheckSignalReq(std::unordered_map<std::string, SigPara>& signals, std::stri
 	int StartingIdx;
 	int ConditionSetNum;
 	int FalseFlag = 0;
+	int ErrorFlag = 0;
 	bool ReturnReqCheck = false;
 	bool IdvReqCheck = false;
 	std::string IdvStateReq;
@@ -255,12 +256,12 @@ bool CheckSignalReq(std::unordered_map<std::string, SigPara>& signals, std::stri
 				// Check if reached the end of the condition set. If it does not, most likely an errenous signal code entered --> fail safe
 				for (idx2 = 0; idx2 < IdvStateReq.length(); idx2++) {
 					if (IdvStateReq[idx2] == '|') {
-						FalseFlag = 0;
+						ErrorFlag = 0;
 						break; // From inner for loop
 					}
-					FalseFlag++;
+					ErrorFlag++;
 				}
-				if (FalseFlag != 0) {
+				if (ErrorFlag != 0) {
 					std::cout << "> Errenous signal index / code detected in state requirements. No signals changed.\n";
 				}
 
@@ -285,7 +286,7 @@ bool CheckSignalReq(std::unordered_map<std::string, SigPara>& signals, std::stri
 		break;
 	}
 
-	if (FalseFlag == 0) {
+	if (FalseFlag == 0 && ErrorFlag == 0) {
 		ReturnReqCheck = true;
 	}
 
@@ -318,7 +319,7 @@ int CheckSwitchCondition(std::unordered_map<std::string, SigPara>& signals, std:
 		}
 		else { 
 			if (SwitchCond == true) {
-				std::cout << "> Switch condition set #" << ConditionIdx + 1 << " FULFILLED." << std::endl;
+				std::cout << "> Switch condition set #" << ConditionIdx + 1 << " FULFILLED." << std::endl << std::endl;
 				return ConditionIdx;
 			}
 
@@ -326,7 +327,7 @@ int CheckSwitchCondition(std::unordered_map<std::string, SigPara>& signals, std:
 			while (StateReq[idx] != '|') {
 				idx++;
 				if (idx > StateReq.length()) {
-					std::cout << "> All switch condition sets UNFULFILLED." << std::endl;
+					std::cout << "> All switch condition sets UNFULFILLED." << std::endl << std::endl;
 					return -1; // reached end of state req string --> no conditions fulfulled
 				}
 			}
@@ -338,7 +339,7 @@ int CheckSwitchCondition(std::unordered_map<std::string, SigPara>& signals, std:
 		}
 
 	}
-	std::cout << "> All switch condition sets UNFULFILLED." << std::endl;
+	std::cout << "> All switch condition sets UNFULFILLED." << std::endl << std::endl;
 	return -1; // reached end of state req string --> no conditions fulfulled
 }
 
