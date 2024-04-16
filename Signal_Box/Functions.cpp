@@ -225,6 +225,11 @@ bool CheckSignalReq(std::unordered_map<std::string, SigPara>& signals, std::stri
 		// Aspect signal
 		ConditionSetNum = CheckSwitchCondition(signals, StateReq, SpacingToNextSignalCondition, SignalConditionStrLength); // Check switch point condition number as this will dictate what conditions need to be met
 
+		if (ConditionSetNum == -1) {
+			ReturnReqCheck = false;
+			break;
+		}
+
 		StartingIdx = 0;
 
 		for (idx = 0; idx < StateReq.length(); idx += SpacingToNextSignalCondition) { // Get starting idx of req condition set
