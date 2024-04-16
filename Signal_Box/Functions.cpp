@@ -197,6 +197,7 @@ bool CheckSignalReq(std::unordered_map<std::string, SigPara>& signals, std::stri
 
 	// Declare variables
 	int idx;
+	int idx2;
 	int StartingIdx;
 	int ConditionSetNum;
 	int FalseFlag = 0;
@@ -244,16 +245,25 @@ bool CheckSignalReq(std::unordered_map<std::string, SigPara>& signals, std::stri
 			StartingIdx++;
 		}
 
-		std::cout << "[DEBUG] StartingIdx: " << StartingIdx << std::endl;
-
 		for (idx = StartingIdx; idx < StateReq.length(); idx += SpacingToNextSignalCondition) { // Check if other aspect signal conditions met for given condition set dictated by the state of the switch points
 			
 			IdvStateReq = StateReq.substr(idx, SignalConditionStrLength);
-			std::cout << "[DEBUG] IdvStateReq: " << IdvStateReq << std::endl;
 
 			// Note, IF-statement runs if the condition is TRUE. ! inverts bool val from TRUE to FALSE and vice versa. 
 			// (IdvStateReq[0] == 'T' ... ) is a bool val that evaluates TRUE whenever 'T', 'Y', or 'R' are the first char
 			if (!(IdvStateReq[0] == 'T' || IdvStateReq[0] == 'R' || IdvStateReq[0] == 'Y' || IdvStateReq[0] == '0')) {
+				// Check if reached the end of the condition set. If it does not, most likely an errenous signal code entered --> fail safe
+				for (idx2 = 0; idx2 < IdvStateReq.length(); idx2++) {
+					if (IdvStateReq[idx2] == '|') {
+						FalseFlag = 0;
+						break; // From inner for loop
+					}
+					FalseFlag++;
+				}
+				if (FalseFlag != 0) {
+					std::cout << "> Errenous signal index / code detected in state requirements. No signals changed.\n";
+				}
+
 				break;
 			}
 
