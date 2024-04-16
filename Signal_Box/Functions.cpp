@@ -199,7 +199,8 @@ bool CheckSignalReq(std::unordered_map<std::string, SigPara>& signals, std::stri
 	int idx;
 	int StartingIdx;
 	int ConditionSetNum;
-	bool ReturnReqCheck = true;
+	int FalseFlag = 0;
+	bool ReturnReqCheck = false;
 	bool IdvReqCheck = false;
 	std::string IdvStateReq;
 
@@ -215,7 +216,7 @@ bool CheckSignalReq(std::unordered_map<std::string, SigPara>& signals, std::stri
 			IdvReqCheck = CheckSignal(signals, IdvStateReq, SignalConditionStrLength);
 
 			if (IdvReqCheck == false) {
-				ReturnReqCheck = false;
+				FalseFlag++;
 			}
 		}
 		break;
@@ -226,12 +227,13 @@ bool CheckSignalReq(std::unordered_map<std::string, SigPara>& signals, std::stri
 		ConditionSetNum = CheckSwitchCondition(signals, StateReq, SpacingToNextSignalCondition, SignalConditionStrLength); // Check switch point condition number as this will dictate what conditions need to be met
 
 		if (ConditionSetNum == -1) {
-			ReturnReqCheck = false;
+			FalseFlag++;
 			break;
 		}
+
 		StartingIdx = 0;
 
-		for (idx = 0; idx < StateReq.length(); idx += SpacingToNextSignalCondition) { // Get starting idx of req condition set
+		for (idx = 0; idx < StateReq.length(); idx++) { // Get starting idx of req condition set
 			if (ConditionSetNum == 0) {
 				break;
 			}
@@ -242,11 +244,16 @@ bool CheckSignalReq(std::unordered_map<std::string, SigPara>& signals, std::stri
 			StartingIdx++;
 		}
 
+		std::cout << "[DEBUG] StartingIdx: " << StartingIdx << std::endl;
+
 		for (idx = StartingIdx; idx < StateReq.length(); idx += SpacingToNextSignalCondition) { // Check if other aspect signal conditions met for given condition set dictated by the state of the switch points
 			
 			IdvStateReq = StateReq.substr(idx, SignalConditionStrLength);
+			std::cout << "[DEBUG] IdvStateReq: " << IdvStateReq << std::endl;
 
-			if (!(IdvStateReq[0] == 'T' || IdvStateReq[0] == 'R' || IdvStateReq[0] == 'Y')) {
+			// Note, IF-statement runs if the condition is TRUE. ! inverts bool val from TRUE to FALSE and vice versa. 
+			// (IdvStateReq[0] == 'T' ... ) is a bool val that evaluates TRUE whenever 'T', 'Y', or 'R' are the first char
+			if (!(IdvStateReq[0] == 'T' || IdvStateReq[0] == 'R' || IdvStateReq[0] == 'Y')) { 
 				break;
 			}
 
@@ -254,7 +261,7 @@ bool CheckSignalReq(std::unordered_map<std::string, SigPara>& signals, std::stri
 				continue; // Proceed to next itr
 			}
 
-			if (IdvStateReq == "0000") {
+			if (IdvStateReq[0] == '0') {
 				std::cout << "> For switch point condition, signal change has no requirements. \n";
 				return true;
 			}
@@ -262,10 +269,14 @@ bool CheckSignalReq(std::unordered_map<std::string, SigPara>& signals, std::stri
 			IdvReqCheck = CheckSignal(signals, IdvStateReq, SignalConditionStrLength);
 			
 			if (IdvReqCheck == false) {
-				ReturnReqCheck = false;
+				FalseFlag++;
 			}
 		}
 		break;
+	}
+
+	if (FalseFlag == 0) {
+		ReturnReqCheck = true;
 	}
 
 	return ReturnReqCheck;
@@ -332,6 +343,9 @@ bool CheckSignal(std::unordered_map<std::string, SigPara>& signals, std::string 
 	case 'F':
 		RequiredSignalState = false;
 		break;
+	default:
+		std::cout << "> Unable to verify required signal state" << std::endl;
+		return false;
 	}
 
 	// Get part of IdvStateReq string with signal identifier
