@@ -229,7 +229,6 @@ bool CheckSignalReq(std::unordered_map<std::string, SigPara>& signals, std::stri
 			ReturnReqCheck = false;
 			break;
 		}
-
 		StartingIdx = 0;
 
 		for (idx = 0; idx < StateReq.length(); idx += SpacingToNextSignalCondition) { // Get starting idx of req condition set
@@ -247,10 +246,10 @@ bool CheckSignalReq(std::unordered_map<std::string, SigPara>& signals, std::stri
 			
 			IdvStateReq = StateReq.substr(idx, SignalConditionStrLength);
 
-			if (IdvStateReq[0] != 'T' || IdvStateReq[0] != 'R' || IdvStateReq[0] != 'Y') {
+			if (!(IdvStateReq[0] == 'T' || IdvStateReq[0] == 'R' || IdvStateReq[0] == 'Y')) {
 				break;
 			}
-			
+
 			if (IdvStateReq[0] == 'T') {
 				continue; // Proceed to next itr
 			}
