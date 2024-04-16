@@ -202,13 +202,16 @@ bool CheckSignalReq(std::unordered_map<std::string, SigPara>& signals, std::stri
 	bool IdvReqCheck = false;
 	std::string IdvStateReq;
 
+	const int SpacingToNextSignalCondition = 6;
+	const int SignalConditionStrLength = 4;
+
 	switch (UserInput[0]) {
 	case 'T':
 		// Switch point
-		for (idx = 0; idx < StateReq.length(); idx += 6) {
+		for (idx = 0; idx < StateReq.length(); idx += SpacingToNextSignalCondition) {
 
-			IdvStateReq = StateReq.substr(idx, idx + 4);
-			IdvReqCheck = CheckSignal(signals, IdvStateReq);
+			IdvStateReq = StateReq.substr(idx, idx + SignalConditionStrLength);
+			IdvReqCheck = CheckSignal(signals, IdvStateReq, SignalConditionStrLength);
 
 			if (IdvReqCheck == false) {
 				ReturnReqCheck = false;
@@ -220,10 +223,11 @@ bool CheckSignalReq(std::unordered_map<std::string, SigPara>& signals, std::stri
 	case 'Y':
 	case 'R':
 		// Aspect signal
+		ConditionSetNum = CheckSwitchCondition(signals, StateReq, SpacingToNextSignalCondition, SignalConditionStrLength); // Check switch point condition number as this will dictate what conditions need to be met
 
-		// Check switch point condition as this will dictate what conditions need to be met and whetehr to skip to next set of conditions
-		// TO DO!!!!
+		for (idx = 0; idx < StateReq.length(); idx += SpacingToNextSignalCondition) {
 
+		}
 		// Null case, signal has no req to change state
 		if (StateReq == "0000") {
 			std::cout << "> Signal change no requirement. \n";
@@ -231,7 +235,7 @@ bool CheckSignalReq(std::unordered_map<std::string, SigPara>& signals, std::stri
 		}
 
 
-		IdvReqCheck = CheckSignal(signals, IdvStateReq);
+		IdvReqCheck = CheckSignal(signals, IdvStateReq, SignalConditionStrLength);
 
 		if (IdvReqCheck == false) {
 			ReturnReqCheck = false;
@@ -243,7 +247,7 @@ bool CheckSignalReq(std::unordered_map<std::string, SigPara>& signals, std::stri
 
 // Check switch point condition and return Condition Set Number in C++ array idx style based on the state of the switch points (different state of the switch points --> different conditional sets)
 // Based on the state of switch points --> know the conditional set to focus on --> determines what set of conditions must be fulfilled to change the state of the aspect signal
-int CheckSwitchCondition(std::unordered_map<std::string, SigPara>& signals, std::string StateReq) {
+int CheckSwitchCondition(std::unordered_map<std::string, SigPara>& signals, std::string StateReq, const int SpacingToNextSignalCondition, const int SignalConditionStrLength) {
 
 	// Declare variables
 	int idx;
@@ -255,12 +259,12 @@ int CheckSwitchCondition(std::unordered_map<std::string, SigPara>& signals, std:
 	// Find which condition set has been fulfilled for each aspect signal
 	// Note, Switch conditions are ALWAYS placed at the start of each condition set
 	std::cout << "> Switch condition set #" << ConditionIdx + 1 << " :" << std::endl;
-	for (idx = 0; idx < StateReq.length(); idx += 6) {
+	for (idx = 0; idx < StateReq.length(); idx += SpacingToNextSignalCondition) {
 		
-		IdvStateReq = StateReq.substr(idx, idx + 4);
+		IdvStateReq = StateReq.substr(idx, idx + SignalConditionStrLength);
 
 		if (IdvStateReq[0] == 'T') {
-			IdvReqCheck = CheckSignal(signals, IdvStateReq);
+			IdvReqCheck = CheckSignal(signals, IdvStateReq, SignalConditionStrLength);
 			if (IdvReqCheck == false) {
 				SwitchCond = false;
 			}
@@ -291,11 +295,11 @@ int CheckSwitchCondition(std::unordered_map<std::string, SigPara>& signals, std:
 }
 
 // Check if EACH signal requirement has been met
-bool CheckSignal(std::unordered_map<std::string, SigPara>& signals, std::string IdvStateReq) {
+bool CheckSignal(std::unordered_map<std::string, SigPara>& signals, std::string IdvStateReq, const int SignalConditionStrLength) {
 	// For signal with ONE req only
 	// Get State Requirement type for req signal (i.e shld the req signal be TRUE or FALSE)
 	bool RequiredSignalState = false;
-	switch (IdvStateReq[3]) {
+	switch (IdvStateReq[SignalConditionStrLength - 1]) {
 	case 'T':
 		RequiredSignalState = true;
 		break;
@@ -305,7 +309,7 @@ bool CheckSignal(std::unordered_map<std::string, SigPara>& signals, std::string 
 	}
 
 	// Get part of IdvStateReq string with signal identifier
-	std::string ReqSignal = IdvStateReq.substr(0, 3);
+	std::string ReqSignal = IdvStateReq.substr(0, SignalConditionStrLength - 1);
 
 	bool CurrentSignalState = signals[ReqSignal].state;
 	signals[ReqSignal].state = RequiredSignalState;
@@ -337,10 +341,16 @@ void ChangeSignal(std::unordered_map<std::string, SigPara>& signals, bool InterL
 	std::cout << SignalOutput(signals, UserInput) << ".\n\n";
 
 	// For switch point pairs, if one has been selected to change and changes successfully, the other will change too
+	const int SpacingToNextSignalCondition = 6;
+	const int SignalConditionStrLength = 4;
+	int NumOfDigits = SignalConditionStrLength - 2; // Number of digits in the signal idx
+
 	if (UserInput[0] == 'T') {
-		int UserInputSwitch = std::stoi(UserInput.substr(1, 2));
+		int UserInputSwitch = std::stoi(UserInput.substr(1, NumOfDigits));
 		int SwitchPairOfUserInputSwitch;
 		std::string SwitchPair;
+
+		// NOTE THIS SECTION IS HARD CODED, REQ ATTN
 
 		if (UserInputSwitch / 10 == 0) {
 			SwitchPairOfUserInputSwitch = (UserInputSwitch % 10) * 11;
