@@ -197,6 +197,7 @@ bool CheckSignalReq(std::unordered_map<std::string, SigPara>& signals, std::stri
 
 	// Declare variables
 	int idx;
+	int StartingIdx;
 	int ConditionSetNum;
 	bool ReturnReqCheck = true;
 	bool IdvReqCheck = false;
@@ -210,7 +211,7 @@ bool CheckSignalReq(std::unordered_map<std::string, SigPara>& signals, std::stri
 		// Switch point
 		for (idx = 0; idx < StateReq.length(); idx += SpacingToNextSignalCondition) {
 
-			IdvStateReq = StateReq.substr(idx, idx + SignalConditionStrLength);
+			IdvStateReq = StateReq.substr(idx, SignalConditionStrLength);
 			IdvReqCheck = CheckSignal(signals, IdvStateReq, SignalConditionStrLength);
 
 			if (IdvReqCheck == false) {
@@ -219,27 +220,48 @@ bool CheckSignalReq(std::unordered_map<std::string, SigPara>& signals, std::stri
 		}
 		break;
 
-
 	case 'Y':
 	case 'R':
 		// Aspect signal
 		ConditionSetNum = CheckSwitchCondition(signals, StateReq, SpacingToNextSignalCondition, SignalConditionStrLength); // Check switch point condition number as this will dictate what conditions need to be met
 
-		for (idx = 0; idx < StateReq.length(); idx += SpacingToNextSignalCondition) {
+		StartingIdx = 0;
 
+		for (idx = 0; idx < StateReq.length(); idx += SpacingToNextSignalCondition) { // Get starting idx of req condition set
+			if (ConditionSetNum == 0) {
+				break;
+			}
+			if (StateReq[StartingIdx] == '|') {
+				StartingIdx += 2;
+				ConditionSetNum--;
+			}
+			StartingIdx++;
 		}
-		// Null case, signal has no req to change state
-		if (StateReq == "0000") {
-			std::cout << "> Signal change no requirement. \n";
-			return true;
+
+		for (idx = StartingIdx; idx < StateReq.length(); idx += SpacingToNextSignalCondition) { // Check if other aspect signal conditions met for given condition set dictated by the state of the switch points
+			
+			IdvStateReq = StateReq.substr(idx, SignalConditionStrLength);
+
+			if (IdvStateReq[0] != 'T' || IdvStateReq[0] != 'R' || IdvStateReq[0] != 'Y') {
+				break;
+			}
+			
+			if (IdvStateReq[0] == 'T') {
+				continue; // Proceed to next itr
+			}
+
+			if (IdvStateReq == "0000") {
+				std::cout << "> For switch point condition, signal change has no requirements. \n";
+				return true;
+			}
+
+			IdvReqCheck = CheckSignal(signals, IdvStateReq, SignalConditionStrLength);
+			
+			if (IdvReqCheck == false) {
+				ReturnReqCheck = false;
+			}
 		}
-
-
-		IdvReqCheck = CheckSignal(signals, IdvStateReq, SignalConditionStrLength);
-
-		if (IdvReqCheck == false) {
-			ReturnReqCheck = false;
-		}
+		break;
 	}
 
 	return ReturnReqCheck;
@@ -261,7 +283,7 @@ int CheckSwitchCondition(std::unordered_map<std::string, SigPara>& signals, std:
 	std::cout << "> Switch condition set #" << ConditionIdx + 1 << " :" << std::endl;
 	for (idx = 0; idx < StateReq.length(); idx += SpacingToNextSignalCondition) {
 		
-		IdvStateReq = StateReq.substr(idx, idx + SignalConditionStrLength);
+		IdvStateReq = StateReq.substr(idx, SignalConditionStrLength);
 
 		if (IdvStateReq[0] == 'T') {
 			IdvReqCheck = CheckSignal(signals, IdvStateReq, SignalConditionStrLength);
@@ -283,7 +305,8 @@ int CheckSwitchCondition(std::unordered_map<std::string, SigPara>& signals, std:
 					return -1; // reached end of state req string --> no conditions fulfulled
 				}
 			}
-			idx -= 3;
+			idx -= (SpacingToNextSignalCondition - 3);
+			IdvReqCheck = false;
 			SwitchCond = true;
 			ConditionIdx++;
 			std::cout << "> Switch condition set #" << ConditionIdx + 1 << ":" << std::endl;
@@ -296,7 +319,6 @@ int CheckSwitchCondition(std::unordered_map<std::string, SigPara>& signals, std:
 
 // Check if EACH signal requirement has been met
 bool CheckSignal(std::unordered_map<std::string, SigPara>& signals, std::string IdvStateReq, const int SignalConditionStrLength) {
-	// For signal with ONE req only
 	// Get State Requirement type for req signal (i.e shld the req signal be TRUE or FALSE)
 	bool RequiredSignalState = false;
 	switch (IdvStateReq[SignalConditionStrLength - 1]) {
@@ -338,7 +360,7 @@ void ChangeSignal(std::unordered_map<std::string, SigPara>& signals, bool InterL
 
 	std::cout << "> SIGNAL " << UserInput << " changed. State changed " << SignalOutput(signals, UserInput) << " -> ";
 	signals[UserInput].state = !signals[UserInput].state; //flip bool variable from true to false and vice versa
-	std::cout << SignalOutput(signals, UserInput) << ".\n\n";
+	std::cout << SignalOutput(signals, UserInput) << ".\n";
 
 	// For switch point pairs, if one has been selected to change and changes successfully, the other will change too
 	const int SpacingToNextSignalCondition = 6;
@@ -350,7 +372,7 @@ void ChangeSignal(std::unordered_map<std::string, SigPara>& signals, bool InterL
 		int SwitchPairOfUserInputSwitch;
 		std::string SwitchPair;
 
-		// NOTE THIS SECTION IS HARD CODED, REQ ATTN
+		// *** NOTE THIS SECTION IS HARD CODED, REQ ATTN ***
 
 		if (UserInputSwitch / 10 == 0) {
 			SwitchPairOfUserInputSwitch = (UserInputSwitch % 10) * 11;
@@ -363,6 +385,8 @@ void ChangeSignal(std::unordered_map<std::string, SigPara>& signals, bool InterL
 
 		std::cout << "> SIGNAL " << SwitchPair << " changed. State changed " << SignalOutput(signals, SwitchPair) << " -> ";
 		signals[SwitchPair].state = !signals[SwitchPair].state; //flip bool variable from true to false and vice versa
-		std::cout << SignalOutput(signals, SwitchPair) << ".\n\n";
+		std::cout << SignalOutput(signals, SwitchPair) << ".\n";
 	}
+
+	std::cout << "\n";
 }
