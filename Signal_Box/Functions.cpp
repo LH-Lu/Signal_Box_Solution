@@ -253,7 +253,7 @@ bool CheckSignalReq(std::unordered_map<std::string, SigPara>& signals, std::stri
 
 			// Note, IF-statement runs if the condition is TRUE. ! inverts bool val from TRUE to FALSE and vice versa. 
 			// (IdvStateReq[0] == 'T' ... ) is a bool val that evaluates TRUE whenever 'T', 'Y', or 'R' are the first char
-			if (!(IdvStateReq[0] == 'T' || IdvStateReq[0] == 'R' || IdvStateReq[0] == 'Y')) { 
+			if (!(IdvStateReq[0] == 'T' || IdvStateReq[0] == 'R' || IdvStateReq[0] == 'Y' || IdvStateReq[0] == '0')) {
 				break;
 			}
 
@@ -261,7 +261,7 @@ bool CheckSignalReq(std::unordered_map<std::string, SigPara>& signals, std::stri
 				continue; // Proceed to next itr
 			}
 
-			if (IdvStateReq[0] == '0') {
+			if (IdvStateReq == "0000") {
 				std::cout << "> For switch point condition, signal change has no requirements. \n";
 				return true;
 			}
