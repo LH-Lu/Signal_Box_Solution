@@ -15,17 +15,14 @@
 */
 
 int main() {
-	/*
-	TO DO:
-	1) Create condition sets based on switch point signals
-	2) Modify interlocker function to accept condition sets (as long as one set of condition is true, change signal state)
-	*/
 
 	// Initialise signals. [EDIT THIS SECTION]
 	std::unordered_map<std::string, SigPara> signal;
-	// Different sets of conditions separated by '||' e.g cond 1.1, 1.2, 1.3 || 2.1, 2.2, 2.3 ... 1.1 to 1.3 are one set of conditions and 2.1 to 2.3 are another set of conditions
+
+	// Different sets of conditions separated by '||' e.g cond 1.1, 1.2, 1.3 || 2.1, 2.2, 2.3 ... 1.1 to 1.3 are one set of conditions and 2.1 to 2.3 are another set of mutaully exclusive conditions
 	// As long as one set of condition is satisfied, the signal state will change
 	// Note, Switch Point conditions to necessitate aspect signal change must be placed in the front of the condition set as shown below
+	// 
 	// UP aspect signals (T11 and T22 omitted as they'll be interlocked with their respective pairs T01 and T02)
 	signal["Y01"] = { false, "T01F, T02F, R01T || T01T, T02F, R01T",	   "T01F, T02F, 0000 || T01T, T02F, 0000", 10 };
 	signal["R01"] = { false, "T01F, T02F, R02T || T01T, T02F, R04F, Y03F", "T01F, T02F, Y01F || T01T, T02F, Y01F", 20 };
