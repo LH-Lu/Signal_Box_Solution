@@ -254,7 +254,7 @@ int CheckSwitchCondition(std::unordered_map<std::string, SigPara>& signals, std:
 
 	// Find which condition set has been fulfilled for each aspect signal
 	// Note, Switch conditions are ALWAYS placed at the start of each condition set
-	std::cout << "> Switch condition set #" << ConditionIdx + 1 << ":" << std::endl;
+	std::cout << "> Switch condition set #" << ConditionIdx + 1 << " :" << std::endl;
 	for (idx = 0; idx < StateReq.length(); idx += 6) {
 		
 		IdvStateReq = StateReq.substr(idx, idx + 4);
@@ -294,13 +294,13 @@ int CheckSwitchCondition(std::unordered_map<std::string, SigPara>& signals, std:
 bool CheckSignal(std::unordered_map<std::string, SigPara>& signals, std::string IdvStateReq) {
 	// For signal with ONE req only
 	// Get State Requirement type for req signal (i.e shld the req signal be TRUE or FALSE)
-	bool StateReqType = false;
+	bool RequiredSignalState = false;
 	switch (IdvStateReq[3]) {
 	case 'T':
-		StateReqType = true;
+		RequiredSignalState = true;
 		break;
 	case 'F':
-		StateReqType = false;
+		RequiredSignalState = false;
 		break;
 	}
 
@@ -308,13 +308,13 @@ bool CheckSignal(std::unordered_map<std::string, SigPara>& signals, std::string 
 	std::string ReqSignal = IdvStateReq.substr(0, 3);
 
 	bool CurrentSignalState = signals[ReqSignal].state;
-	signals[ReqSignal].state = StateReqType;
+	signals[ReqSignal].state = RequiredSignalState;
 	std::cout << "> Signal change requirement SIGNAL: " << ReqSignal << ". REQ STATE: " << SignalOutput(signals, ReqSignal) << ". REQ SATISFIED: ";
 	signals[ReqSignal].state = CurrentSignalState;
 	
 	
 	// Signal fulfilled required state for requested signal to change state
-	if (StateReqType == CurrentSignalState) {
+	if (RequiredSignalState == CurrentSignalState) {
 		std::cout << "YES. \n";
 		return true;
 	}
