@@ -13,17 +13,19 @@
 
 int main() {
 
-	// Initialise signals. [EDIT THIS SECTION]
+	// Initialise signals
 	std::unordered_map<std::string, SigPara> signal;
 
-	// Different sets of conditions separated by '||' e.g cond 1.1, 1.2, 1.3 || 2.1, 2.2, 2.3 ... 1.1 to 1.3 are one set of conditions and 2.1 to 2.3 are another set of mutaully exclusive conditions
+	// ================================= E D I T A B L E    A R E A    S T A R T ==============================================
+
+	// Different sets of conditions separated by ' || ' e.g cond 1.1, 1.2, 1.3 || 2.1, 2.2, 2.3 ... 1.1 to 1.3 are one set of conditions and 2.1 to 2.3 are another set of mutaully exclusive conditions
 	// As long as one set of condition is satisfied, the signal state will change
 	// Note, Switch Point conditions to necessitate aspect signal change must be placed in the front of the condition set as shown below
 	// 
 	// Naming convention for state req: 4 CHAR -> X00R
 	//  X: Denotes type of signal. Y for warning / caution aspect. R for stop aspect. T for switch points
 	// 00: Two digit signal index. Unique numbers for aspect signals. Common digits for switch pairs (e.g T01 and T11 are switch pair). Pairs will change states together (e.g If T01 change state, T11 will also change)
-	//  R: Required state of the signal in order for the requested signal to change state (e.g R01T means stop aspect signal must be in true state in order for requested signal to change state)
+	//  R: Required state of the signal in order for the requested signal to change state (e.g R01T means stop aspect signal R01 must be in true state in order for requested signal to change state)
 	//     T denotes True state (GREEN for aspect signals, TURNOUT state for switch points). F denotes False state (YELLOW / RED for aspect signals, STRAIGHT state for switch points)
 	// 
 	// Note, 0000 for state req --> No pre-req needed to change requested signal state for that particular condition set
@@ -44,6 +46,8 @@ int main() {
 	signal["T02"] = { false, "T01F, T11F, Y01F, R01F, R02F, Y03F, R04F, R05F", "Y01F, R01F, R02F, Y03F, R04F, R05F", 50 };
 	signal["T22"] = { false, "T01F, T11F, Y01F, R01F, R02F, Y03F, R04F, R05F", "Y01F, R01F, R02F, Y03F, R04F, R05F", -30 };
 
+	// ================================= E D I T A B L E    A R E A    E N D ==================================================
+	 
 	
 	// Initialise user input and case matching
 	std::string SignalUserInput = "000";

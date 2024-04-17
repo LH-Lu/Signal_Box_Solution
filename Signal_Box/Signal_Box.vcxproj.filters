@@ -18,7 +18,13 @@
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Functions.cpp">
+    <ClCompile Include="AuxFunctions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PrintToConsoleFunctions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="InterlockingSourceCode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

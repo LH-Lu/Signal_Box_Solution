@@ -13,198 +13,22 @@
 
 // NOTE: With the exception of SignalStatusPrint, if std::unordered_map para is: FIRST argument --> function called privately; SECOND arguement --> function called directly from main function. 
 
-// Prints section break
-void PrintSectionBreak() {
-	int idx;
-	const int MAX = 31;
-	for (idx = 0; idx < MAX; idx++){
-		std::cout << "=";
-		}
-	std::cout << " NEXT SECTION ";
-	for (idx = 0; idx < MAX;idx++) {
-		std::cout << "=";
-	}
-	std::cout << "\n\n";
-}
-
-
-
-// Prints signal location and state along the line
-void SignalStatusPrint(std::unordered_map<std::string, SigPara>& signals) {
-
-	const int MaxDist = 71;
-
-	PrintSignalLocation(signals, UP, MaxDist);
-	PrintSignalState(signals, UP, MaxDist);
-
-
-	std::cout << " ->  ----*---------*---------*---------*---------*---------*---------*  -> UP" << std::endl; // main line. 70 char from start to last dash
-	std::cout << "                              \\ ______________ /                           " << std::endl; // to print \ char, need to use \\ designation
-	std::cout << "                              /                 \\                          " << std::endl;
-	std::cout << " <-  ----*---------*---------*---------*---------*---------*---------*  <- DOWN" << std::endl;
-
-	PrintSignalLocation(signals, DOWN, MaxDist);
-	PrintSignalState(signals, DOWN, MaxDist);
-
-	std::cout << std::endl;
-}
-
-// Prints signal information at the desired location
-void PrintSignalLocation(std::unordered_map<std::string, SigPara>& signals, SigDirection Direction, const int MaxDist) {
-	
-	std::unordered_map<std::string, SigPara>::iterator itr;
-	itr = signals.begin(); // note maps.end() points to the address just past the last element of the map
-	int idx;
-	bool check = false;
-
-	for (idx = 1; idx < MaxDist; idx++) {
-		if (idx % 10 != 0) {
-			std::cout << " ";
-		}
-		else {
-			for (itr = signals.begin(); itr != signals.end(); itr++) {
-				check = false;
-				if (Direction == UP && idx == itr->second.LocationPx) {
-					std::cout << itr->first;
-					idx += 2;
-					check = true;
-					break;
-				}
-				if (Direction == DOWN && idx == (-1 * itr->second.LocationPx)) {
-					std::cout << itr->first;
-					idx += 2;
-					check = true;
-					break;
-				}
-			}
-			if (check == false) {
-				std::cout << " ";
-			}
-		}
-	}
-	std::cout << std::endl;
-}
-
-// Prints signal state at the desired location
-void PrintSignalState(std::unordered_map<std::string, SigPara>& signals, SigDirection Direction, const int MaxDist) {
-	
-	std::unordered_map<std::string, SigPara>::iterator itr;
-	itr = signals.begin(); // note maps.end() points to the address just past the last element of the map
-	int idx;
-	bool check = false;
-
-	for (idx = 1; idx < MaxDist; idx++) {
-		if (idx % 10 != 0) {
-			std::cout << " ";
-		}
-		else {
-			for (itr = signals.begin(); itr != signals.end(); itr++) {
-				check = false;
-				if (Direction == UP && idx == itr->second.LocationPx) {
-					std::cout << SignalOutput(signals, itr->first) << " >";
-					idx += 2;
-					check = true;
-					break;
-				}
-				if (Direction == DOWN && idx == (-1 * itr->second.LocationPx)) {
-					std::cout << SignalOutput(signals, itr->first) << " <";
-					idx += 2;
-					check = true;
-					break;
-				}
-			}
-			if (check == false) {
-				std::cout << " ";
-			}
-		}
-	}
-	std::cout << std::endl;
-}
-
-// Check state of signal and prints out correct char
-char SignalOutput(std::unordered_map<std::string, SigPara>& signals, std::string SignalMapKey) {
-	
-	switch (SignalMapKey[0]) {
-	case 'Y':
-		if (signals[SignalMapKey].state == true) {
-			return 'G';
-		}
-		return 'Y';
-		break;
-
-	case 'R':
-		if (signals[SignalMapKey].state == true) {
-			return 'G';
-		}
-		return 'R';
-		break;
-
-	case 'T':
-		if (signals[SignalMapKey].state == true) {
-			return '/';
-		}
-		return '-';
-		break;
-	}
-}
-
-
-
-// Check if user input matches map key (i.e signal name)
-bool CheckInput(std::string UserInput, std::unordered_map<std::string, SigPara>& signals) {
-	if (UserInput == "END") {
-		std::cout << "> Ending program!\n\n";
-		return false;
-	}
-
-	if (UserInput == "RST") {
-		std::cout << "> Resetting all signals and switch points back to default state! \n\n";
-		return false;
-	}
-	
-	if (signals.find(UserInput) == signals.end()) {
-		// UserInput not found
-		std::cout << "> Input not found!\n\n";
-		return false;
-	}
-
-	// UserInput found
-	std::cout << "> Signal found.\n";
-	return true;
-}
-
-
-
-// Resets all signals back to default state
-void ResetState(std::unordered_map<std::string, SigPara>& signals) {
-	
-	std::unordered_map<std::string, SigPara>::iterator itr;
-	itr = signals.begin();
-
-	for (itr = signals.begin(); itr != signals.end(); itr++) {
-		itr->second.state = false;
-	}
-
-}
-
-
-
 // Check if Signal Req.s met to change signal(interlocking function)
 void InterLocking(std::string UserInput, std::unordered_map<std::string, SigPara>& signals) {
 
 	bool InterLockCheck = false;
 
 	// Check current state to determine which signal state user wants to switch
-	switch (signals[UserInput].state){
-		case false: // User wants to switch signal false -> true
-			InterLockCheck = CheckSignalReq(signals, UserInput, signals[UserInput].TrueStateReq);
-			ChangeSignal(signals, InterLockCheck, UserInput);
-			break;
+	switch (signals[UserInput].state) {
+	case false: // User wants to switch signal false -> true
+		InterLockCheck = CheckSignalReq(signals, UserInput, signals[UserInput].TrueStateReq);
+		ChangeSignal(signals, InterLockCheck, UserInput);
+		break;
 
-		case true: // User wants to switch signal true -> false
-			InterLockCheck = CheckSignalReq(signals, UserInput, signals[UserInput].FalseStateReq);
-			ChangeSignal(signals, InterLockCheck, UserInput);
-			break;
+	case true: // User wants to switch signal true -> false
+		InterLockCheck = CheckSignalReq(signals, UserInput, signals[UserInput].FalseStateReq);
+		ChangeSignal(signals, InterLockCheck, UserInput);
+		break;
 	}
 }
 
@@ -263,7 +87,7 @@ bool CheckSignalReq(std::unordered_map<std::string, SigPara>& signals, std::stri
 		}
 
 		for (idx = StartingIdx; idx < StateReq.length(); idx += SpacingToNextSignalCondition) { // Check if other aspect signal conditions met for given condition set dictated by the state of the switch points
-			
+
 			IdvStateReq = StateReq.substr(idx, SignalConditionStrLength);
 
 			// Note, IF-statement runs if the condition is TRUE. ! inverts bool val from TRUE to FALSE and vice versa. 
@@ -294,7 +118,7 @@ bool CheckSignalReq(std::unordered_map<std::string, SigPara>& signals, std::stri
 			}
 
 			IdvReqCheck = CheckSignal(signals, IdvStateReq, SignalConditionStrLength);
-			
+
 			if (IdvReqCheck == false) {
 				FalseFlag++;
 			}
@@ -324,7 +148,7 @@ int CheckSwitchCondition(std::unordered_map<std::string, SigPara>& signals, std:
 	// Note, Switch conditions are ALWAYS placed at the start of each condition set
 	std::cout << "> Switch condition set #" << ConditionIdx + 1 << ":" << std::endl;
 	for (idx = 0; idx < StateReq.length(); idx += SpacingToNextSignalCondition) {
-		
+
 		IdvStateReq = StateReq.substr(idx, SignalConditionStrLength);
 
 		if (IdvStateReq[0] == 'T') {
@@ -333,13 +157,13 @@ int CheckSwitchCondition(std::unordered_map<std::string, SigPara>& signals, std:
 				SwitchCond = false;
 			}
 		}
-		else { 
+		else {
 			if (SwitchCond == true) {
 				std::cout << "> Switch condition set #" << ConditionIdx + 1 << " FULFILLED." << std::endl << std::endl;
 				return ConditionIdx;
 			}
 
-						
+
 			while (StateReq[idx] != '|') {
 				idx++;
 				if (idx > StateReq.length()) {
@@ -382,8 +206,8 @@ bool CheckSignal(std::unordered_map<std::string, SigPara>& signals, std::string 
 	signals[ReqSignal].state = RequiredSignalState;
 	std::cout << "> Signal change requirement SIGNAL: " << ReqSignal << ". REQ STATE: " << SignalOutput(signals, ReqSignal) << ". REQ SATISFIED: ";
 	signals[ReqSignal].state = CurrentSignalState;
-	
-	
+
+
 	// Signal fulfilled required state for requested signal to change state
 	if (RequiredSignalState == CurrentSignalState) {
 		std::cout << "YES. \n";
@@ -397,7 +221,7 @@ bool CheckSignal(std::unordered_map<std::string, SigPara>& signals, std::string 
 
 // Change signal state if the check is true and display what state the signal changed to
 void ChangeSignal(std::unordered_map<std::string, SigPara>& signals, bool InterLockCheck, std::string UserInput) {
-	
+
 	if (InterLockCheck == false) {
 		std::cout << "> SIGNAL " << UserInput << " not changed. Current state: " << SignalOutput(signals, UserInput) << ".\n\n";
 		return;
