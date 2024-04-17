@@ -30,7 +30,10 @@ void PrintSignalState(std::unordered_map<std::string, SigPara>& signals, SigDire
 char SignalOutput(std::unordered_map<std::string, SigPara>& signals, std::string SignalMapKey);
 
 // Check if user input matches map key (i.e signal name)
-bool CheckInput(std::string UserInput, std::unordered_map<std::string, SigPara>& Signals);
+bool CheckInput(std::string UserInput, std::unordered_map<std::string, SigPara>& signals);
+
+// Resets all signals back to default state
+void ResetState(std::unordered_map<std::string, SigPara>& signals);
 
 // Check if Signal Req.s met to change signal(interlocking function)
 void InterLocking(std::string UserInput, std::unordered_map<std::string, SigPara>& signals);

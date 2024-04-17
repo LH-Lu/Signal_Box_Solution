@@ -156,6 +156,11 @@ bool CheckInput(std::string UserInput, std::unordered_map<std::string, SigPara>&
 		std::cout << "> Ending program!\n\n";
 		return false;
 	}
+
+	if (UserInput == "RST") {
+		std::cout << "> Resetting all signals and switch points back to default state! \n\n";
+		return false;
+	}
 	
 	if (signals.find(UserInput) == signals.end()) {
 		// UserInput not found
@@ -166,6 +171,20 @@ bool CheckInput(std::string UserInput, std::unordered_map<std::string, SigPara>&
 	// UserInput found
 	std::cout << "> Signal found.\n";
 	return true;
+}
+
+
+
+// Resets all signals back to default state
+void ResetState(std::unordered_map<std::string, SigPara>& signals) {
+	
+	std::unordered_map<std::string, SigPara>::iterator itr;
+	itr = signals.begin();
+
+	for (itr = signals.begin(); itr != signals.end(); itr++) {
+		itr->second.state = false;
+	}
+
 }
 
 

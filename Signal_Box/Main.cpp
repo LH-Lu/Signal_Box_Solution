@@ -20,6 +20,14 @@ int main() {
 	// As long as one set of condition is satisfied, the signal state will change
 	// Note, Switch Point conditions to necessitate aspect signal change must be placed in the front of the condition set as shown below
 	// 
+	// Naming convention for state req: 4 CHAR -> X00R
+	//  X: Denotes type of signal. Y for warning / caution aspect. R for stop aspect. T for switch points
+	// 00: Two digit signal index. Unique numbers for aspect signals. Common digits for switch pairs (e.g T01 and T11 are switch pair). Pairs will change states together (e.g If T01 change state, T11 will also change)
+	//  R: Required state of the signal in order for the requested signal to change state (e.g R01T means stop aspect signal must be in true state in order for requested signal to change state)
+	//     T denotes True state (GREEN for aspect signals, TURNOUT state for switch points). F denotes False state (YELLOW / RED for aspect signals, STRAIGHT state for switch points)
+	// 
+	// Note, 0000 for state req --> No pre-req needed to change requested signal state for that particular condition set
+	// 
 	// UP aspect signals (T11 and T22 omitted as they'll be interlocked with their respective pairs T01 and T02)
 	signal["Y01"] = { false, "T01F, T02F, R01T || T01T, T02F, R01T",	   "T01F, T02F, 0000 || T01T, T02F, 0000", 10 };
 	signal["R01"] = { false, "T01F, T02F, R02T || T01T, T02F, R04F, Y03F", "T01F, T02F, Y01F || T01T, T02F, Y01F", 20 };
@@ -47,12 +55,16 @@ int main() {
 	while (SignalUserInput != "END") {
 
 		// Enter signal key and check if user input match with signal identifier. Exits program if "END" entered
-		std::cout << "Enter 3 character signal code ('END' to quit): ";
+		std::cout << "Enter 3 character signal code ('RST' to reset. 'END' to quit): ";
 		std::getline(std::cin, SignalUserInput);
 		std::cout << "Status:" << std::endl;
 		SignalMatch = CheckInput(SignalUserInput, signal);
 		if (SignalUserInput == "END") {
 			break;
+		}
+
+		if (SignalUserInput == "RST") { // SignalMatch will be set false for 'RST' user input by CheckInput function
+			ResetState(signal);
 		}
 
 		// Check if all pre-requisite match to change signal state then change signal state if pre-req match
