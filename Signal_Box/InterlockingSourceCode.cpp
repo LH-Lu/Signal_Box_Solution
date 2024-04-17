@@ -232,25 +232,33 @@ void ChangeSignal(std::unordered_map<std::string, SigPara>& signals, bool InterL
 	std::cout << SignalOutput(signals, UserInput) << ".\n";
 
 	// For switch point pairs, if one has been selected to change and changes successfully, the other will change too
-	const int SpacingToNextSignalCondition = 6;
-	const int SignalConditionStrLength = 4;
-	int NumOfDigits = SignalConditionStrLength - 2; // Number of digits in the signal idx
+	
 
 	if (UserInput[0] == 'T') {
-		int UserInputSwitch = std::stoi(UserInput.substr(1, NumOfDigits));
-		int SwitchPairOfUserInputSwitch;
+		const int SpacingToNextSignalCondition = 6;
+		const int SignalConditionStrLength = 4;
+		int NumOfDigits = SignalConditionStrLength - 2; // Number of digits in the signal idx
+		int UserInputSwitchIdx = std::stoi(UserInput.substr(1, NumOfDigits));
+		int SwitchPairIdx;
+		int UserInputSwitchIdxTemp = UserInputSwitchIdx;
+		int NumOfNonZeroDigits = 0;
+		int idx;
 		std::string SwitchPair;
 
-		// *** NOTE THIS SECTION IS HARD CODED, REQ ATTN ***
+		// ** Note, for now, this only works for 2 digit signal idx. Therefore, the max possible is 9 switch pairs **
 
-		if (UserInputSwitch / 10 == 0) {
-			SwitchPairOfUserInputSwitch = (UserInputSwitch % 10) * 11;
-			SwitchPair = 'T' + std::to_string(SwitchPairOfUserInputSwitch);
+		while (UserInputSwitchIdxTemp != 0) { 
+			UserInputSwitchIdxTemp /= 10;
+			NumOfNonZeroDigits++;
 		}
-		else if (UserInputSwitch / 10 == UserInputSwitch % 10) {
-			SwitchPairOfUserInputSwitch = (UserInputSwitch % 10);
-			SwitchPair = "T0" + std::to_string(SwitchPairOfUserInputSwitch);
+
+		SwitchPairIdx = (UserInputSwitchIdx % 10) * pow(11, (NumOfNonZeroDigits - 2) * -1);
+
+		SwitchPair = "T";
+		for (idx = NumOfNonZeroDigits; idx > 1; idx--) {
+			SwitchPair += "0";
 		}
+		SwitchPair += std::to_string(SwitchPairIdx);
 
 		std::cout << "> SIGNAL " << SwitchPair << " changed. State changed " << SignalOutput(signals, SwitchPair) << " -> ";
 		signals[SwitchPair].state = !signals[SwitchPair].state; //flip bool variable from true to false and vice versa
