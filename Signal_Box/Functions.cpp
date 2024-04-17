@@ -1,6 +1,3 @@
-#include<iostream>
-#include<string>
-#include<unordered_map>
 #include"AllTheFunctions.h"
 
 // struct class is placed in the function header file and not here --> prevent duplication and errors.

@@ -1,6 +1,3 @@
-#include<iostream>
-#include<string>
-#include<unordered_map>
 #include"AllTheFunctions.h"
 
 // struct class is placed in the function header file and not here --> prevent duplication and errors.
@@ -15,8 +12,6 @@
 */
 
 int main() {
-
-	// TO DO: Just fill in the condition sets for the down line and debug and test :D
 
 	// Initialise signals. [EDIT THIS SECTION]
 	std::unordered_map<std::string, SigPara> signal;

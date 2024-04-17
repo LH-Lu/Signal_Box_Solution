@@ -1,5 +1,9 @@
 #pragma once
 
+#include<iostream>
+#include<string>
+#include<unordered_map>
+
 struct SigPara {
 	bool state;
 	std::string TrueStateReq;
