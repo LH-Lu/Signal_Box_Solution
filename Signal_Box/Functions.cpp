@@ -303,7 +303,7 @@ int CheckSwitchCondition(std::unordered_map<std::string, SigPara>& signals, std:
 
 	// Find which condition set has been fulfilled for each aspect signal
 	// Note, Switch conditions are ALWAYS placed at the start of each condition set
-	std::cout << "> Switch condition set #" << ConditionIdx + 1 << " :" << std::endl;
+	std::cout << "> Switch condition set #" << ConditionIdx + 1 << ":" << std::endl;
 	for (idx = 0; idx < StateReq.length(); idx += SpacingToNextSignalCondition) {
 		
 		IdvStateReq = StateReq.substr(idx, SignalConditionStrLength);

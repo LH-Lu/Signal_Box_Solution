@@ -23,11 +23,11 @@ int main() {
 	// UP aspect signals (T11 and T22 omitted as they'll be interlocked with their respective pairs T01 and T02)
 	signal["Y01"] = { false, "T01F, T02F, R01T || T01T, T02F, R01T",	   "T01F, T02F, 0000 || T01T, T02F, 0000", 10 };
 	signal["R01"] = { false, "T01F, T02F, R02T || T01T, T02F, R04F, Y03F", "T01F, T02F, Y01F || T01T, T02F, Y01F", 20 };
-	signal["R02"] = { false, "T01F, T02F, 0000 || T01F, T02T, 0000",	   "T01F, T02F, R01F || T01F, T02T, 0000", 70 };
+	signal["R02"] = { false, "T01F, T02F, 0000 || T01F, T02T, R05F",	   "T01F, T02F, R01F || T01F, T02T, 0000", 70 };
 	// DOWN aspect signals
 	signal["Y03"] = { false, "T11F, T22F, R04T || T11T, T22F, R04T",	   "T11F, T22F, 0000 || T11T, T22F, 0000", -70 };
 	signal["R04"] = { false, "T11F, T22F, R05T || T11T, T22F, R01F, Y01F", "T11F, T22F, Y03F || T11T, T22F, Y03F", -60 };
-	signal["R05"] = { false, "T11F, T22F, 0000 || T11F, T22T, 0000",	   "T11F, T22F, R04F || T11F, T22T, 0000", -10 };
+	signal["R05"] = { false, "T11F, T22F, 0000 || T11F, T22T, R02F",	   "T11F, T22F, R04F || T11F, T22T, 0000", -10 };
 
 	// SWITCH POINT pair 1 (everything has to be in default state in order to change switch points) Note, switch pairs interlocked tgt --> if one is in true state, the other will also be in true state
 	signal["T01"] = { false, "T02F, T22F, Y01F, R01F, R02F, Y03F, R04F, R05F", "Y01F, R01F, R02F, Y03F, R04F, R05F", 30 };
