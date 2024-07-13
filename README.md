@@ -85,4 +85,4 @@ The variables are in the format: signal["3 char Signal Code"] = { false, "True s
 
 For example: signal["Y01"] = { false, "T01F, T02F, R01T || T01T, T02F, R01T", "T01F, T02F, 0000 || T01T, T02F, 0000", 10 };
 
-T01F, T02F, R01T are one condition set while T01T, T02F, R01T are another condition set in order to change signal Y01 from false to true state.
+T01F, T02F, R01T are one condition set while T01T, T02F, R01T are another condition set in order to change signal Y01 from false to true state. Notice that all neccessary Switch Point conditions are placed at the start of each condition set.
