@@ -62,7 +62,9 @@ Signal location denotes the location of the signal in the basic diagram. This mu
 
 For the state req, there is a fixed naming convention that must be strictly adhered to. This is repeated in the comments inside the source code.
 
-Different sets of conditions separated by ' || ' (|| surrounaded by a whitespace on each side). As long as one set of condition is satisfied, the signal state will change. Note, Switch Point conditions to necessitate aspect signal change must be placed in the front of the condition set.
+Different sets of conditions separated by ' || ' (|| surrounaded by a whitespace on each side). As long as one set of condition is satisfied, the signal state will change. 
+
+Note, Switch Point conditions to necessitate aspect signal change must be placed in the front of the condition set.
 
 Naming convention for state req: 4 CHAR -> X00R
 
